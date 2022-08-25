@@ -1,0 +1,15 @@
+imagePullSecrets: [
+    name: nexus-registry
+]
+
+frontend:
+  username: admin
+  password: admin
+
+backend:
+  username: admin
+  password: admin
+  db:
+    url: mongodb://hero:hero1234!@mongodb/hero
+
+

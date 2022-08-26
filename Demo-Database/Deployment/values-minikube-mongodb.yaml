@@ -1,0 +1,20 @@
+auth:
+  enabled: true
+  rootUser: root
+  rootPassword: rootPassword1
+  usernames:
+    - hero
+  passwords:
+    - hero
+  databases:
+    - hero
+
+global:
+  storageClass: standard
+
+livenessProbe:
+  enabled: false
+readinessProbe:
+  enabled: false
+startupPorbe:
+  enabled: false

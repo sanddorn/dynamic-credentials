@@ -1,0 +1,35 @@
+imagePullSecrets: [
+    name: nexus-registry
+]
+
+vault:
+  hostname: http://vault:8200
+
+frontend:
+  backend_url: "https://backend"
+  trusted_certificate: |
+    -----BEGIN CERTIFICATE-----
+    MIIDOzCCAiOgAwIBAgIUD5oULnENw2cMUwZ91uIKUI9yvwwwDQYJKoZIhvcNAQEL
+    BQAwGDEWMBQGA1UEAxMNY2x1c3Rlci5sb2NhbDAeFw0yMjA3MTkxNjUzMjRaFw0z
+    MjA3MTYxNjUzNTFaMBgxFjAUBgNVBAMTDWNsdXN0ZXIubG9jYWwwggEiMA0GCSqG
+    SIb3DQEBAQUAA4IBDwAwggEKAoIBAQC3vGcz3LuFHLBDmhB0VL7NMoK6ihqIYDPW
+    R04InBG4ZwsEY1P0l1zLLvO/Yp6c+z2bL488V/SH1bxFMkVEzxJOcM3SVkbgnzQ7
+    y75o31Nfg1yYCAHqrIIRKlwrwQ3HydN7rv8VXXIfHKl41yXzJ+wP31maLAveFfwn
+    ubhBRa39ik6A/RqMlTdLQVC0Wfd0oDKm6nb414jdBnlzHSl0uJVMXc5r9vw4N4f7
+    adGq2uFrnGI4ff2fex/puIUoemlxfBC7Taa9Ex+uTHElMFfzJpoL565JnhIAf0K9
+    +/D2O4ljI5H/W1sJRvmwIlr9/WEMnyHtheSBqSVwzwPqlRafQJE1AgMBAAGjfTB7
+    MA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBR8c+/V
+    JAFOjX4Q6YDyi6J8fxJC8TAfBgNVHSMEGDAWgBR8c+/VJAFOjX4Q6YDyi6J8fxJC
+    8TAYBgNVHREEETAPgg1jbHVzdGVyLmxvY2FsMA0GCSqGSIb3DQEBCwUAA4IBAQBL
+    cPKzfxCUYzMYcI1JuZffv+CifB09OQfb8ZeEV/GhwQ1zBdw7PFzFAQfqmws9NqHH
+    OGM7qLGUMmjBjhRBb05mYy29CAo1LpHy8PowjRZMh0ire1BUC7KGImH6vJnXH7XR
+    ijZhFa8Dss5FacwaCzMVqU15Jg1RsICjFLADueqfosjEd/VRHSI0x3aDCBQj1d4Y
+    7dgP/A2844ugSIeA/Vv7YnNawA5JKDX0A+6DEg/TFd3hfUCBo9j/4rYFPjch3DMf
+    YBdvGmblMrL8UfR+vfWrwcECOB6Tds9n5wU0hiOYmmow6IZdpsKXdPw8/Tok6iBi
+    o+fVKNr7arobLjWl/V43
+    -----END CERTIFICATE-----
+backend:
+  db:
+    hostname: mongodb:27017
+
+

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "Frontend.fullname" . }}
+data:
+  BACKEND_URL: {{ .Values.frontend.backend_url | default "http://backend" | quote }}
+  VAULT_URI: {{ required "Must provide URL to active Vault" .Values.vault.hostname }}
+  VAULT_ENABLED: "true"
+{{- if .Values.frontend.trusted_certificate }}
+  TRUSTED_CERTIFICATE: |
+    {{ .Values.frontend.trusted_certificate  | nindent 4 }}
+{{- end }}

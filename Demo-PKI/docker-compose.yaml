@@ -1,0 +1,92 @@
+version: "3"
+services:
+  frontend:
+    image: dynamic-credentials/frontend
+    environment:
+      - "BACKEND_URL=https://backend:8080"
+      - "VAULT_ENABLED=true"
+      - "VAULT_URI=http://vault:8200"
+      - |
+        TRUSTED_CERTIFICATE=
+        -----BEGIN CERTIFICATE-----
+        MIIDOzCCAiOgAwIBAgIUIq8Ps09qFp7Jf3zi7ETQWoe5bTcwDQYJKoZIhvcNAQEL
+        BQAwGDEWMBQGA1UEAxMNY2x1c3Rlci5sb2NhbDAeFw0yMjA4MjkxNjQ5NDFaFw0z
+        MjA4MjYxNjUwMTFaMBgxFjAUBgNVBAMTDWNsdXN0ZXIubG9jYWwwggEiMA0GCSqG
+        SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDCMuJFVAPU4TPyCRRMo1sv7165cEKGlSz7
+        /rlC0862EV82aQop+8ILD9ISHI/Xo7fHCZreLwwQAb/mibHhbPvHEYytPus9zFKz
+        LL4dVHTyAMwcOXtQHzCqBEdWZJZ8mupJQeRrPwxP5ChNiTL9pGu+5SEPnpRcd+kg
+        SHWCi94T6bdOMXLMV+vjn7vI+L0pbMD5cFHeTydJA76fI/ZKem2kdJ+ITnHRXWvE
+        /yil4NSavAVncdhe4UF9WekWHOHQv0lAkyBCOldc9SO+G80QQyQoLSrCz3ZKdfyR
+        dIUkXwswI5bSZIjORJ98MTHvLurzmCnmcs1DfQsfte+SRhs5g9RRAgMBAAGjfTB7
+        MA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBR1R1GM
+        yWrMSeDOeu+tb85Wyz5MQTAfBgNVHSMEGDAWgBR1R1GMyWrMSeDOeu+tb85Wyz5M
+        QTAYBgNVHREEETAPgg1jbHVzdGVyLmxvY2FsMA0GCSqGSIb3DQEBCwUAA4IBAQAL
+        vs+DEsVHq8On3ExjhbxI1fQbD2u8ZeP8YPy/J66JlKOdptgT6wtDPkwgZazMv+e1
+        DniqAt+qW/nYQtR69JUqYu8N6EN56GtajXRCLC9iVSeoLDHgVIWZ19p5kQmR/YZ/
+        IsTtz/q+OvyYd25q5/S4s2NFiOZAzk8vEdvmHyT2fHj5wx63osjxtLt1Ar222zyw
+        81VgXTu9ogOmR8iTAaDJ7SHabeBK/KJRCzDI8XIQsZ5o+7GTMRxbCoRiPopS0aLv
+        t5VKrJTz0t1dy1U9Pi0T7FA+OHot4AXuACH86UqfTFwJPy4jDoKvja2At2JqyvlR
+        JZvMTmGXTv8QcntPOsva
+        -----END CERTIFICATE-----
+    command:
+      - "--spring.cloud.vault.token=root"
+    networks:
+      - inner
+    ports:
+      - "8080:8080"
+  backend:
+    image: dynamic-credentials/backend
+    environment:
+      - "MONGODB_HOST=database:27017"
+      - "VAULT_ENABLED=true"
+      - "VAULT_URI=http://vault:8200"
+    networks:
+      - inner
+    ports:
+      - "8088:8080"
+  database:
+    image: mongo:latest # Don't use latest
+    environment:
+      - "MONGO_INITDB_ROOT_USERNAME=admin"
+      - "MONGO_INITDB_ROOT_PASSWORD=admin"
+    networks:
+      - inner
+    hostname: database
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongodb://admin:admin@database:27017/admin --quiet
+  vault:
+    image: vault:1.10.3
+    cap_add:
+      - IPC_LOCK
+    environment:
+      - "VAULT_DEV_ROOT_TOKEN_ID=root"
+    networks:
+      - inner
+    hostname: vault
+    depends_on:
+      - database
+    ports:
+      - "8200:8200"
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://vault:8200/ui/ || exit 1"
+
+  vault_provisioner:
+    image: curlimages/curl
+    command: >
+      sh -c "sleep 2 &&
+            curl -v --header \"X-Vault-Token: root\" --header \"Content-Type: application/json\" --data '{\"data\": {\"USERNAME\": \"admin\", \"PASSWORD\": \"admin\"}}' http://vault:8200/v1/secret/data/frontend && 
+            curl -v --header \"X-Vault-Token: root\" --header \"Content-Type: application/json\" --data '{\"type\": \"database\"}' http://vault:8200/v1/sys/mounts/database && 
+            curl -v --header \"X-Vault-Token: root\" --header \"Content-Type: application/json\" --data '{\"plugin_name\": \"mongodb-database-plugin\", \"connection_url\": \"mongodb://{{username}}:{{password}}@database:27017/admin\", \"username\": \"admin\", \"password\": \"admin\", \"allowed_roles\": \"*\"}' http://vault:8200/v1/database/config/mongo &&
+            curl -v --header 'X-Vault-Token: root' --header 'Content-Type: application/json' --data '{\"db_name\": \"mongo\", \"default_ttl\": 300, \"max_ttl\": 310, \"creation_statements\": [\"{ \\\"db\\\": \\\"hero\\\", \\\"roles\\\": [{ \\\"role\\\": \\\"readWrite\\\" }]}\"], \"revocation_statements\": [\"{\\\"db\\\": \\\"hero\\\"}\"]}' http://vault:8200/v1/database/roles/backend &&
+            curl -v --header 'X-Vault-Token: root' --header 'Content-Type: application/json' --data '{\"type\": \"pki\"}' http://vault:8200/v1/sys/mounts/pki &&
+            curl -v --header 'X-Vault-Token: root' --header 'Content-Type: application/json' --data '{\"max_lease_ttl\":\"87600h\"}' http://vault:8200/v1/sys/mounts/pki/tune &&
+            curl -v --header 'X-Vault-Token: root' --header 'Content-Type: application/json' --data  '{ \"common_name\": \"cluster.local\", \"issuer_name\": \"root-2022\", \"ttl\": \"87600h\" }' http://vault:8200/v1/pki/root/generate/internal &&
+            curl -v --header 'X-Vault-Token: root' --header 'Content-Type: application/json' --data '{\"allow_any_name\":\"true\", \"issuer_ref\": \"root-2022\", \"ttl\": \"15m\"}' http://vault:8200/v1/pki/roles/backend"
+    depends_on:
+      - vault
+    networks:
+      - inner
+networks:
+  inner: {}

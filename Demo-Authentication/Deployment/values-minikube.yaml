@@ -1,0 +1,14 @@
+imagePullSecrets: [
+    name: nexus-registry
+]
+
+vault:
+  hostname: http://vault:8200
+
+frontend:
+  backend_url: http://backend:8080
+backend:
+  db:
+    hostname: mongodb:27017
+
+

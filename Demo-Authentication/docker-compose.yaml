@@ -1,0 +1,84 @@
+version: "3"
+services:
+  frontend:
+    image: dynamic-credentials/frontend
+    environment:
+      - "BACKEND_URL=http://backend:8080"
+      - "VAULT_ENABLED=true"
+      - "VAULT_URI=http://vault:8200"
+    command:
+      - "--spring.cloud.vault.token=root"
+    networks:
+      - inner
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+      - vault
+  backend:
+    image: dynamic-credentials/backend
+    environment:
+      - "MONGODB_HOST=database:27017"
+      - "VAULT_ENABLED=true"
+      - "VAULT_URI=http://vault:8200"
+    networks:
+      - inner
+    ports:
+      - "8088:8080"
+    depends_on:
+      - database
+  database:
+    image: mongo:latest # Don't use latest
+    environment:
+      - "MONGO_INITDB_ROOT_USERNAME=admin"
+      - "MONGO_INITDB_ROOT_PASSWORD=admin"
+    networks:
+      - inner
+    hostname: database
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongodb://admin:admin@database:27017/admin --quiet
+  vault:
+    image: vault:1.10.3
+    cap_add:
+      - IPC_LOCK
+    environment:
+      - "VAULT_DEV_ROOT_TOKEN_ID=root"
+    networks:
+      - inner
+    hostname: vault
+    depends_on:
+      - database
+    ports:
+      - "8200:8200"
+    volumes:
+      - ./Vault-SpringUser-Plugin/vault/plugins:/srv:ro
+    command:
+      - server
+      - -dev
+      - -dev-plugin-dir=/srv
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://vault:8200/ui/ || exit 1"
+
+  vault_provisioner:
+    image: curlimages/curl
+    command: >
+      sh -c "sleep 1 && 
+            curl -v --header \"X-Vault-Token: root\" --header \"Content-Type: application/json\" --data '{\"data\": {\"USERNAME\": \"admin\", \"PASSWORD\": \"admin\"}}' http://vault:8200/v1/secret/data/frontend && 
+            curl -v --header \"X-Vault-Token: root\" --header \"Content-Type: application/json\" --data '{\"type\": \"database\"}' http://vault:8200/v1/sys/mounts/database && 
+            curl -v --header \"X-Vault-Token: root\" --header \"Content-Type: application/json\" --data '{\"plugin_name\": \"mongodb-database-plugin\", \"connection_url\": \"mongodb://{{username}}:{{password}}@database:27017/admin\", \"username\": \"admin\", \"password\": \"admin\", \"allowed_roles\": \"*\"}' http://vault:8200/v1/database/config/mongo &&
+            curl -v --header 'X-Vault-Token: root' --header 'Content-Type: application/json' --data '{\"db_name\": \"mongo\", \"default_ttl\": 300, \"max_ttl\": 310, \"creation_statements\": [\"{ \\\"db\\\": \\\"hero\\\", \\\"roles\\\": [{ \\\"role\\\": \\\"readWrite\\\" }]}\"], \"revocation_statements\": [\"{\\\"db\\\": \\\"hero\\\"}\"]}' http://vault:8200/v1/database/roles/backend &&
+            curl -v --header 'X-Vault-Token: root' --header 'Content-Type: application/json' --data \"{\\\"sha256\\\": \\\"`sha256sum /srv/vault-plugin-spring-boot | cut -f1 -d ' '`\\\", \\\"command\\\": \\\"vault-plugin-spring-boot\\\"}\" http://vault:8200/v1/sys/plugins/catalog/secret/vault-plugin-spring-boot &&
+            curl -v --header 'X-Vault-Token: root' --header 'Content-Type: application/json' --data '{\"type\": \"vault-plugin-spring-boot\"}'  http://vault:8200/v1/sys/mounts/backenduser &&
+            curl -v --header 'X-Vault-Token: root' --header 'Content-Type: application/json' --data '{\"username\": \"admin\", \"password\": \"admin\", \"url\": \"mongodb://database:27017\"}' http://vault:8200/v1/backenduser/config
+            curl -v --header 'X-Vault-Token: root' --header 'Content-Type: application/json' --data '{\"database\": \"hero\", \"collection\": \"user\", \"roles\": \"USER\", \"class\": \"de.bermuda.hero.backend.UserEntry\", \"ttl\": \"300\", \"max_ttl\": \"600\"}' http://vault:8200/v1/backenduser/role/hero
+      "
+    depends_on:
+      - vault
+    networks:
+      - inner
+    volumes:
+      - ./Vault-SpringUser-Plugin/vault/plugins:/srv:ro
+networks:
+  inner: {}

@@ -1,0 +1,39 @@
+global:
+  tlsDisable: true
+  imagePullSecrets:
+    - name: nexus-registry
+
+injector:
+  enabled: false
+
+server:
+  image:
+    repository: <<REGISTRY>>/vault
+    tag: 1.0.0-SNAPSHOT
+  ingress:
+    enabled: true
+    activeService: true
+    hosts:
+      - host: vault.credentials
+        paths:
+          - /
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
+  standalone:
+    enabled: true
+    config: |
+      ui = true
+
+      listener "tcp" {
+        tls_disable = 1
+        address = "[::]:8200"
+        cluster_address = "[::]:8201"
+      }
+      storage "file" {
+        path = "/vault/data"
+      }
+      plugin_directory = "/plugins"
+
+  ha:
+    enabled: false

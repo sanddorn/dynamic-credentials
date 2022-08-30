@@ -8,14 +8,11 @@ The source code is tested with:
 * Java 17
 * Kubernetes 1.24.0
 
-## Steps
+## Step 1 (Demo-Database)
 
-### Step 0
+This demo will use the database-module from vault.
 
-You'll find the beginning of the journey in the `main` branch of the repository. All credentials are stored in plain
-text in the `application.properties` or in the kubernetes secret resources.
-
-#### Installation
+### Installation
 
 Create a minikube (or full blown kubernetes cluster). Find details for minikube on https://minikube.sigs.k8s.io/docs/
 
@@ -26,33 +23,10 @@ kubectl create namespace dynamic-credentials
 ```
 
 If you want to use a local mongodb, you may use the `Deployment/values-minikube-mongodb.yaml` as an example for
-the `bitnami/mongodb` helm chart. You can also use a standalone database or the mongodb cloud database. You'll need a
-db `hero` and a user to login to this database:
+the `bitnami/mongodb` helm chart. You can also use a standalone database or the mongodb cloud database.
 
-```json
-db.createUser(
-    {
-      user: "hero",
-      password: "hero1234!",
-      roles: [
-        {role: "readWrite", db: "hero"}
-      ]
-    }
-)
-```
-
-Now you can deploy validate and adapt the `Deployment/values.minikube.yaml` and deploy backend and frontend with the helm charts from `Deployment/backend`and `Deployment/frontend` 
-
-Find the Hero application on `frontend.credentials/hero`.
-
-### Step 1
-
-Vault with dynamic database passwords.
-
-
-#### Installation
-
-You may use the previous installation of step 0. You'll have to create a vault-container with the plugin:
+Now for the vault container. As there is the new plugin, a new container-image is built:
+You'll have to create a vault-container with the plugin:
 ```shell
 cd Vault-SpringUser-Plugin 
 REGISTRY=<<YOUR REGISTRY/>> make deploy
@@ -64,7 +38,7 @@ Adapt the `values-minikube-vault.yaml` to match your registry, then you can inst
 helm upgrade --install -n dynamic-credentials vault hashicorp/vault -f values-minikube-vault.yaml
 ```
 
-When using the hashicorp helm start, you'll have to `vault operator init` and then unseal. It is supposed, that you are quite familiar with the start-up of a vault server. 
+When using the hashicorp helm start, you'll have to `vault operator init` and then unseal. It is supposed, that you are quite familiar with the start-up of a vault server.
 
 To add the plugin into the plugin catalog, the `sha256` is needed:
 ```shell
@@ -75,6 +49,8 @@ With the generated checksum, the plugin can be added:
 ```shell
 vault write sys/plugins/catalog/secret/vault-plugin-spring-boot sha256="<<SHA265>>" command=vault-plugin-spring-boot
 ```
+
+When using the hashicorp helm start, you'll have to `vault operator init` and then unseal. It is supposed, that you are quite familiar with the start-up of a vault server.
 
 Create necessary vault-resources:
 ```shell
@@ -103,5 +79,9 @@ vault write backenduser/config username=root password=rootPassword1 url=mongodb:
 vault write backenduser/role/hero database=hero collection=user roles=USER class=de.bermuda.hero.backend.UserEntry ttl=300
 ```
 
+### Install the Application
+Now you can deploy validate and adapt the `Deployment/values.minikube.yaml` and deploy backend and frontend with the helm charts from `Deployment/backend`and `Deployment/frontend`
+
+Find the Hero application on `frontend.credentials/hero`.## Steps
 
 

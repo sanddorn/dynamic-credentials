@@ -8,14 +8,12 @@ The source code is tested with:
 * Java 17
 * Kubernetes 1.24.0
 
-## Steps
-
-### Step 0
+## Step 0 (Start)
 
 You'll find the beginning of the journey in the `main` branch of the repository. All credentials are stored in plain
 text in the `application.properties` or in the kubernetes secret resources.
 
-#### Installation
+### Installation
 
 Create a minikube (or full blown kubernetes cluster). Find details for minikube on https://minikube.sigs.k8s.io/docs/
 

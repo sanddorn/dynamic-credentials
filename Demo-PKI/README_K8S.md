@@ -8,12 +8,9 @@ The source code is tested with:
 * Java 17
 * Kubernetes 1.24.0
 
-## Steps
+## Step 2 (Demo-PKI)
 
-### Step 0
-
-You'll find the beginning of the journey in the `main` branch of the repository. All credentials are stored in plain
-text in the `application.properties` or in the kubernetes secret resources.
+This will use the database and the PKI module from vault. 
 
 #### Installation
 
@@ -26,33 +23,9 @@ kubectl create namespace dynamic-credentials
 ```
 
 If you want to use a local mongodb, you may use the `Deployment/values-minikube-mongodb.yaml` as an example for
-the `bitnami/mongodb` helm chart. You can also use a standalone database or the mongodb cloud database. You'll need a
-db `hero` and a user to login to this database:
+the `bitnami/mongodb` helm chart. You can also use a standalone database or the mongodb cloud database.
 
-```json
-db.createUser(
-    {
-      user: "hero",
-      password: "hero1234!",
-      roles: [
-        {role: "readWrite", db: "hero"}
-      ]
-    }
-)
-```
-
-Now you can deploy validate and adapt the `Deployment/values.minikube.yaml` and deploy backend and frontend with the helm charts from `Deployment/backend`and `Deployment/frontend` 
-
-Find the Hero application on `frontend.credentials/hero`.
-
-### Step 1
-
-Vault with dynamic database passwords.
-
-
-#### Installation
-
-You may use the previous installation of step 0. You'll have to add a vault-container:
+Now for the vault container
 ```shell
 helm repo add hashicorp https://helm.releases.hashicorp.com
 helm repo update   
@@ -85,14 +58,7 @@ vault write database/roles/backend \
     max_ttl="300"
 ```
 
-### Step 2
-
-Use Vault PKI for internal TLS encryption
-
-#### Installation
-
-Bring the Vault container up as described in [Step 1](#step-1). 
-To configure the PKI system use the following commands:
+Now configure the PKI system use the following commands:
 ```shell
 vault secrets enable pki
 vault secrets tune -max-lease-ttl=87600h pki
@@ -118,6 +84,10 @@ keytool -import -file ./ca.pem -alias vaultca -keystore truststore
 You'll have to edit the `./Deployment/values-minikube.yaml` and add the key `frontend.truststore` as it is commented out in the file.
 
 
+### Install the Application
+Now you can deploy validate and adapt the `Deployment/values.minikube.yaml` and deploy backend and frontend with the helm charts from `Deployment/backend`and `Deployment/frontend`
+
+Find the Hero application on `frontend.credentials/hero`.
 
 
 

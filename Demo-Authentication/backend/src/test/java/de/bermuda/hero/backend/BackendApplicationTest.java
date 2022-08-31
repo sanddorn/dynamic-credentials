@@ -16,7 +16,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 class BackendApplicationTest {
 
     @Container
-    private static MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:latest");
+    private static MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:5.0.9");
 
 
     @Test

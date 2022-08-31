@@ -36,4 +36,4 @@ jobs:
         run: mvn package
       - name: Build Vault Plugin
         working-directory: Demo-Authentication/Vault-SpringUser-Plugin
-        run: make
+        run: make build

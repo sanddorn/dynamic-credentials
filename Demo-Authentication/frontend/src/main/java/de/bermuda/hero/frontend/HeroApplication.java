@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.vault.config.VaultBootstrapper;
 import org.springframework.context.annotation.Bean;
@@ -16,11 +15,6 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class HeroApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(HeroApplication.class);
-    public static void main(String[] args) {
-        var application = new SpringApplication(HeroApplication.class);
-        application.addBootstrapRegistryInitializer(VaultBootstrapper.fromConfigurer(new FrontendVaultConfigurer()));
-        application.run(args);
-    }
 
     @Bean
     @RefreshScope
@@ -39,6 +33,12 @@ public class HeroApplication {
             LOGGER.info("No username, password: '{}'", password);
         }
         return heroApi;
+    }
+
+    public static void main(String[] args) {
+        var application = new SpringApplication(HeroApplication.class);
+        application.addBootstrapRegistryInitializer(VaultBootstrapper.fromConfigurer(new FrontendVaultConfigurer()));
+        application.run(args);
     }
 
 

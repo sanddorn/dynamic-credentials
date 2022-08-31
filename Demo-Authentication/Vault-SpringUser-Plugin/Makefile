@@ -1,11 +1,11 @@
 VERSION=1.0.0-SNAPSHOT
 
 ifndef GOARCH
-	UNAME = $(shell uname -m)
-	ifeq ($(UNAME), x86_64)
+	MACHINE = $(shell uname -m)
+	ifeq ($(MACHINE), x86_64)
 		GOARCH=amd64
 	else
-		GOARCH=$(UNAME)
+		GOARCH=$(MACHINE)
 	endif
 endif
 

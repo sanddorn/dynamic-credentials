@@ -10,6 +10,7 @@ import de.bermuda.hero.client.api.HeroApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ import org.springframework.vault.core.lease.event.SecretLeaseCreatedEvent;
 import org.springframework.vault.core.lease.event.SecretLeaseExpiredEvent;
 
 @Configuration
+@ConditionalOnBean(SecretLeaseContainer.class)
 public class VaultSecretRotationConfiguration {
     public static final String VAULT_AUTH_CREDENTIALS_PATH = "backenduser/creds/hero";
     public static final String USERNAME = "username";
@@ -38,25 +40,6 @@ public class VaultSecretRotationConfiguration {
         this.leaseContainer = leaseContainer;
         this.applicationContext = applicationContext;
         this.refreshScope = refreshScope;
-    }
-
-    @Bean
-    @RefreshScope
-    HeroApi createHeroApi(
-            @Value("${backend.url}") String backendUrl,
-            @Value("${rest.username}") String username,
-                          @Value("${rest.password}") String password) {
-        var heroApi = new HeroApi();
-        final ApiClient apiClient = heroApi.getApiClient();
-        apiClient.setBasePath(backendUrl);
-
-        if (username != null) {
-            apiClient.setPassword(password);
-            apiClient.setUsername(username);
-        } else {
-            LOGGER.info("No username, password: '{}'", password);
-        }
-        return heroApi;
     }
 
     @PostConstruct

@@ -28,7 +28,7 @@ services:
     depends_on:
       - database
   database:
-    image: mongo:latest # Don't use latest
+    image: mongo:5.0.9 
     environment:
       - "MONGO_INITDB_ROOT_USERNAME=admin"
       - "MONGO_INITDB_ROOT_PASSWORD=admin"

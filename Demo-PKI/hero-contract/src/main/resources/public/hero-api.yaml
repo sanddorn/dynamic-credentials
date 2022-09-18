@@ -69,7 +69,7 @@ security:
   - basicAuth: []
 
 servers:
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/Bermuda/hero-api/1.0.0-SNAPSHOT
+  - description: localhost
+    url: http://localhost:8080
   - description: Integration System
     url: https://heros.bermuda.de/

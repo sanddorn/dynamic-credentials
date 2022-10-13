@@ -65,7 +65,6 @@ public class VaultCertificateHandler implements WebServerFactoryCustomizer<Tomca
                                    @Value("${server.port:8443}") int port,
                                    ApplicationContext applicationContext
     ) {
-
         Objects.requireNonNull(pkiRoleName);
         this.vaultTemplate = vaultTemplate;
         this.commonName = commonName;
@@ -79,29 +78,11 @@ public class VaultCertificateHandler implements WebServerFactoryCustomizer<Tomca
         threadPoolTaskScheduler.initialize();
 
         taskScheduler = threadPoolTaskScheduler;
-
-
     }
 
     @Override
     public void customize(TomcatServletWebServerFactory factory) {
         generateSslFromVaultCertificate();
-
-        //        X509Certificate caCert = bundle.getX509IssuerCertificate();
-        //        LOGGER.info("CA-SerialNumber: {}", caCert.getSerialNumber());
-        // TODO: Put this into Frontend-Config.
-        //        try {
-        //            KeyStore trustStore = KeyStore.getInstance("pkcs12");
-        //            trustStore.load(null, null);
-        //            trustStore.setCertificateEntry("ca", caCert);
-        //            String trustStorePath = saveKeyStoreToFile("server-trust.pkcs12", trustStore);
-        //
-        //            ssl.setTrustStore(trustStorePath);
-        //            ssl.setTrustStorePassword("123456");
-        //            ssl.setTrustStoreType(trustStore.getType());
-        //        } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException e) {
-        //            LOGGER.error("Cannot create Truststore", e);
-        //        }
 
         factory.setSsl(ssl);
         factory.setPort(port);
@@ -123,8 +104,8 @@ public class VaultCertificateHandler implements WebServerFactoryCustomizer<Tomca
                                                                  .build();
         CertificateBundle certificateBundle;
         try {
-            VaultCertificateResponse response = vaultPkiOperations.issueCertificate(pkiRoleName, request); // (3)
-            certificateBundle = response.getRequiredData(); // (4)
+            VaultCertificateResponse response = vaultPkiOperations.issueCertificate(pkiRoleName, request);
+            certificateBundle = response.getRequiredData();
         } catch (VaultException e) {
             LOGGER.error("VaultException ", e);
             throw e;

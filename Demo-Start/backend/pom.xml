@@ -155,6 +155,7 @@
                             <modelPackage>de.bermuda.hero.model</modelPackage>
                             <!--                                        <configHelp>true</configHelp>-->
                             <configOptions>
+                                <documentationProvider>none</documentationProvider>
                                 <interfaceOnly>true</interfaceOnly>
                                 <skipOverwrite>false</skipOverwrite>
                                 <skipDefaultInterface>true</skipDefaultInterface>

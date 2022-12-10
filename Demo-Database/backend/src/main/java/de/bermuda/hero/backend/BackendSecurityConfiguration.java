@@ -43,10 +43,10 @@ public class BackendSecurityConfiguration {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((authz) -> authz
-                        .antMatchers("/actuator").permitAll()
-                        .antMatchers("/*").authenticated()
-                        .antMatchers("/hero/**").authenticated()
+                .authorizeHttpRequests(authz ->
+                                               authz.requestMatchers("/actuator/**").permitAll()
+                                                    .requestMatchers("/**").authenticated()
+                                                    .requestMatchers("/hero/**").authenticated()
                 ).httpBasic().and().csrf().disable();
         return http.build();
     }

@@ -19,13 +19,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 public class MongoConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoConfiguration.class);
 
-    //    @Bean
-    //    public MongoCustomConversions customConversions() {
-    //        List<Converter<?, ?>> converters = new ArrayList<>();
-    //        converters.add(new OffsetDateTimeToDateConverter());
-    //        converters.add(new DateToOffsetDateTimeConverter());
-    //        return new MongoCustomConversions(converters);
-    //    }
 
     @RefreshScope
     @Bean

@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,13 +18,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+@Configuration
 @EnableWebSecurity
 public class BackendSecurityConfiguration {
 
     @Bean
-    public UserDetailsService userDetailsService(UserRepository userRepository,
-                                                 @Value("${rest.username}") String username,
-                                                 @Value("${rest.password}") String password) {
+    public UserDetailsService users(UserRepository userRepository,
+                                    @Value("${rest.username}") String username,
+                                    @Value("${rest.password}") String password) {
 
         var userEntry = new UserEntry();
         userEntry.setUsername(username);
@@ -54,12 +57,14 @@ public class BackendSecurityConfiguration {
                                                authz.requestMatchers("/actuator/**").permitAll()
                                                     .requestMatchers("/**").authenticated()
                                                     .requestMatchers("/hero/**").authenticated()
-                ).httpBasic().and().csrf().disable();
+                )
+                .httpBasic(Customizer.withDefaults())
+                .csrf().disable();
         return http.build();
     }
 
     class MongoUserDetailsService implements UserDetailsService {
-        private final Logger LOGGER = LoggerFactory.getLogger(MongoUserDetailsService.class);
+        private final static Logger LOGGER = LoggerFactory.getLogger(MongoUserDetailsService.class);
         private final UserRepository userRepository;
 
         public MongoUserDetailsService(UserRepository userRepository) {

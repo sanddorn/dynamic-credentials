@@ -41,7 +41,7 @@ fmt: $(GOFILES)
 	go fmt $$(go list ./...)
 
 docker: build
-	docker build -t $(REGISTRY)vault:$(VERSION)
+	docker build -t $(REGISTRY)vault:$(VERSION) .
 
 deploy: docker
 	docker push $(REGISTRY)vault:$(VERSION)

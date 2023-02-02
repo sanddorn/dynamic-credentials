@@ -4,10 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.bermuda.hero.client.ApiClient;
 import de.bermuda.hero.client.ApiException;
+import de.bermuda.hero.client.ServerConfiguration;
+import de.bermuda.hero.client.ServerVariable;
 import de.bermuda.hero.client.api.HeroApi;
 import de.bermuda.hero.client.model.Hero;
 
@@ -30,7 +33,13 @@ public class HeroServiceRestClient implements HeroService {
                                  @Value("${apiclient.trust-certificate}") String certificate) {
         heroApi = new HeroApi();
         final ApiClient apiClient = heroApi.getApiClient();
-        apiClient.setBasePath(backendUrl);
+
+        var serverConfiguration = new ServerConfiguration(
+                backendUrl,
+                "MyServer",
+                new HashMap<String, ServerVariable>()
+        );
+        apiClient.setServers(List.of(serverConfiguration));
 
         if (Strings.isNotBlank(certificate)) {
             LOGGER.info("Certificate: '{}", certificate);

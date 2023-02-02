@@ -1,6 +1,11 @@
 package de.bermuda.hero.frontend;
 
+import java.util.HashMap;
+import java.util.List;
+
 import de.bermuda.hero.client.ApiClient;
+import de.bermuda.hero.client.ServerConfiguration;
+import de.bermuda.hero.client.ServerVariable;
 import de.bermuda.hero.client.api.HeroApi;
 
 import org.slf4j.Logger;
@@ -24,7 +29,13 @@ public class HeroApplication {
             @Value("${rest.password}") String password) {
         var heroApi = new HeroApi();
         final ApiClient apiClient = heroApi.getApiClient();
-        apiClient.setBasePath(backendUrl);
+
+        var serverConfiguration = new ServerConfiguration(
+                backendUrl,
+                "MyServer",
+                new HashMap<String, ServerVariable>()
+        );
+        apiClient.setServers(List.of(serverConfiguration));
 
         if (username != null) {
             apiClient.setPassword(password);

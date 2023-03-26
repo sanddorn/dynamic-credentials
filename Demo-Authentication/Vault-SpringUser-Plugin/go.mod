@@ -3,7 +3,7 @@ module github.com/sanddorn/vault-spring-user-plugin
 go 1.18
 
 require (
-	github.com/hashicorp/go-hclog v1.4.0
+	github.com/hashicorp/go-hclog v1.5.0
 	github.com/hashicorp/vault/api v1.9.0
 	github.com/hashicorp/vault/sdk v0.8.1
 	go.mongodb.org/mongo-driver v1.11.3

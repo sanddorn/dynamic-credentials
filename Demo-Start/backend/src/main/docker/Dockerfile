@@ -8,12 +8,5 @@ FROM gcr.io/distroless/java17
 WORKDIR application
 EXPOSE 8080
 ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75"
-COPY --from=builder application/dependencies/ ./
-RUN true
-COPY --from=builder application/spring-boot-loader/ ./
-RUN true
-COPY --from=builder application/snapshot-dependencies/ ./
-RUN true
-COPY --from=builder application/application/ ./
-RUN true
+COPY --from=builder application/dependencies/ application/spring-boot-loader/ application/snapshot-dependencies/ application/application/ ./
 ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]

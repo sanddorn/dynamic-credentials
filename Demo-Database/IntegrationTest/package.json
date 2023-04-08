@@ -3,7 +3,7 @@
     "cy:open": "cypress open",
     "cy:run": "cypress run"
   },
-  "dependencies": {
+  "devDependencies": {
     "cypress": "^12.9.0"
   }
 }

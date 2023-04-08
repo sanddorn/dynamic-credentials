@@ -6,28 +6,6 @@ services:
       - "BACKEND_URL=https://backend:8080"
       - "VAULT_ENABLED=true"
       - "VAULT_URI=http://vault:8200"
-      - |
-        TRUSTED_CERTIFICATE=
-        -----BEGIN CERTIFICATE-----
-        MIIDOzCCAiOgAwIBAgIUIq8Ps09qFp7Jf3zi7ETQWoe5bTcwDQYJKoZIhvcNAQEL
-        BQAwGDEWMBQGA1UEAxMNY2x1c3Rlci5sb2NhbDAeFw0yMjA4MjkxNjQ5NDFaFw0z
-        MjA4MjYxNjUwMTFaMBgxFjAUBgNVBAMTDWNsdXN0ZXIubG9jYWwwggEiMA0GCSqG
-        SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDCMuJFVAPU4TPyCRRMo1sv7165cEKGlSz7
-        /rlC0862EV82aQop+8ILD9ISHI/Xo7fHCZreLwwQAb/mibHhbPvHEYytPus9zFKz
-        LL4dVHTyAMwcOXtQHzCqBEdWZJZ8mupJQeRrPwxP5ChNiTL9pGu+5SEPnpRcd+kg
-        SHWCi94T6bdOMXLMV+vjn7vI+L0pbMD5cFHeTydJA76fI/ZKem2kdJ+ITnHRXWvE
-        /yil4NSavAVncdhe4UF9WekWHOHQv0lAkyBCOldc9SO+G80QQyQoLSrCz3ZKdfyR
-        dIUkXwswI5bSZIjORJ98MTHvLurzmCnmcs1DfQsfte+SRhs5g9RRAgMBAAGjfTB7
-        MA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBR1R1GM
-        yWrMSeDOeu+tb85Wyz5MQTAfBgNVHSMEGDAWgBR1R1GMyWrMSeDOeu+tb85Wyz5M
-        QTAYBgNVHREEETAPgg1jbHVzdGVyLmxvY2FsMA0GCSqGSIb3DQEBCwUAA4IBAQAL
-        vs+DEsVHq8On3ExjhbxI1fQbD2u8ZeP8YPy/J66JlKOdptgT6wtDPkwgZazMv+e1
-        DniqAt+qW/nYQtR69JUqYu8N6EN56GtajXRCLC9iVSeoLDHgVIWZ19p5kQmR/YZ/
-        IsTtz/q+OvyYd25q5/S4s2NFiOZAzk8vEdvmHyT2fHj5wx63osjxtLt1Ar222zyw
-        81VgXTu9ogOmR8iTAaDJ7SHabeBK/KJRCzDI8XIQsZ5o+7GTMRxbCoRiPopS0aLv
-        t5VKrJTz0t1dy1U9Pi0T7FA+OHot4AXuACH86UqfTFwJPy4jDoKvja2At2JqyvlR
-        JZvMTmGXTv8QcntPOsva
-        -----END CERTIFICATE-----
     command:
       - "--spring.cloud.vault.token=root"
     networks:

@@ -22,18 +22,66 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+      - name: Set up Node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
       - name: Build Demo-Start
         working-directory: Demo-Start
         run: mvn package
+      - name: Start Demo-Start
+        working-directory: Demo-Start
+        run: docker-compose up -d
+      - name: Test Demo-Start
+        working-directory: Demo-Start/IntegrationTests
+        run: npm install && npm run cy:run
+      - name: Stop Demo-Start
+        working-directory: Demo-Start
+        run: docker-compose down && docker-compose rm -f
       - name: Build Demo-Database
         working-directory: Demo-Database
         run: mvn package
+      - name: Start Demo-Database
+        working-directory: Demo-Database
+        run: docker-compose up -d
+      - name: Test Demo-Database
+        working-directory: Demo-Database/IntegrationTests
+        run: npm install && npm run cy:run
+      - name: Stop Demo-Database
+        working-directory: Demo-Database
+        run: docker-compose down && docker-compose rm -f
       - name: Build Demo-PKI
         working-directory: Demo-PKI
         run: mvn package
+      - name: Start Demo-PKI vault
+        working-directory: Demo-PKI
+        run: docker-compose up vault vault_provisioner backend
+      - name: retrieve PKI token
+        working-directory: Demo-PKI
+        run: echo "TRUSTED_CERTIFICATE=`curl http://localhost:8200/v1/pki/cert/ca | jq .data.certificate | sed 's/\\n/\n/g'| sed -e's/\"//'`" >> $GITHUB_ENV
+      - name: Start Demo-PKI frontend
+        working-directory: Demo-PKI
+        run: docker-compose up frontend
+      - name: Test Demo-PKI
+        working-directory: Demo-PKI/IntegrationTests
+        run: npm install && npm run cy:run
+      - name: Stop Demo-PKI
+        working-directory: Demo-PKI
+        run: docker-compose down && docker-compose rm -f
       - name: Build Demo-Authentication
         working-directory: Demo-Authentication
         run: mvn package
       - name: Build Vault Plugin
         working-directory: Demo-Authentication/Vault-SpringUser-Plugin
         run: make build
+      - name: Start Demo-Authentication
+        working-directory: Demo-Authentication
+        run: docker-compose up -d
+      - name: Test Demo-Authentication
+        working-directory: Demo-Authentication/IntegrationTests
+        run: npm install && npm run cy:run
+      - name: Stop Demo-Authentication
+        working-directory: Demo-Authentication
+        run: docker-compose down && docker-compose rm -f
+

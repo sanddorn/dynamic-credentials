@@ -48,7 +48,7 @@ jobs:
         run: docker-compose up -d
       - name: Test Demo-Database
         working-directory: Demo-Database/IntegrationTest
-        run: npm install && npm run cy:run
+        run: sleep 10 && npm install && npm run cy:run
       - name: Stop Demo-Database
         working-directory: Demo-Database
         run: docker-compose down && docker-compose rm -f

@@ -30,7 +30,7 @@ jobs:
           cache-dependency-path: 'Demo-Start/IntegrationTest'
       - name: Build Demo-Start
         working-directory: Demo-Start
-        run: mvn package
+        run: mvn install
       - name: Start Demo-Start
         working-directory: Demo-Start
         run: docker-compose up -d
@@ -42,7 +42,7 @@ jobs:
         run: docker-compose down && docker-compose rm -f
       - name: Build Demo-Database
         working-directory: Demo-Database
-        run: mvn package
+        run: mvn install
       - name: Start Demo-Database
         working-directory: Demo-Database
         run: docker-compose up -d
@@ -54,7 +54,7 @@ jobs:
         run: docker-compose down && docker-compose rm -f
       - name: Build Demo-PKI
         working-directory: Demo-PKI
-        run: mvn package
+        run: mvn install
       - name: Start Demo-PKI vault
         working-directory: Demo-PKI
         run: docker-compose up vault vault_provisioner backend
@@ -72,7 +72,7 @@ jobs:
         run: docker-compose down && docker-compose rm -f
       - name: Build Demo-Authentication
         working-directory: Demo-Authentication
-        run: mvn package
+        run: mvn install
       - name: Build Vault Plugin
         working-directory: Demo-Authentication/Vault-SpringUser-Plugin
         run: make build

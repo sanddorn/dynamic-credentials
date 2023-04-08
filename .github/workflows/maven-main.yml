@@ -35,7 +35,7 @@ jobs:
         working-directory: Demo-Start
         run: docker-compose up -d
       - name: Test Demo-Start
-        working-directory: Demo-Start/IntegrationTests
+        working-directory: Demo-Start/IntegrationTest
         run: npm install && npm run cy:run
       - name: Stop Demo-Start
         working-directory: Demo-Start
@@ -47,7 +47,7 @@ jobs:
         working-directory: Demo-Database
         run: docker-compose up -d
       - name: Test Demo-Database
-        working-directory: Demo-Database/IntegrationTests
+        working-directory: Demo-Database/IntegrationTest
         run: npm install && npm run cy:run
       - name: Stop Demo-Database
         working-directory: Demo-Database
@@ -65,7 +65,7 @@ jobs:
         working-directory: Demo-PKI
         run: docker-compose up frontend
       - name: Test Demo-PKI
-        working-directory: Demo-PKI/IntegrationTests
+        working-directory: Demo-PKI/IntegrationTest
         run: npm install && npm run cy:run
       - name: Stop Demo-PKI
         working-directory: Demo-PKI
@@ -80,7 +80,7 @@ jobs:
         working-directory: Demo-Authentication
         run: docker-compose up -d
       - name: Test Demo-Authentication
-        working-directory: Demo-Authentication/IntegrationTests
+        working-directory: Demo-Authentication/IntegrationTest
         run: npm install && npm run cy:run
       - name: Stop Demo-Authentication
         working-directory: Demo-Authentication

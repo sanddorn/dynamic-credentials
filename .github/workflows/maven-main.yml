@@ -60,7 +60,7 @@ jobs:
         run: docker-compose up -d vault vault_provisioner backend
       - name: retrieve PKI token
         working-directory: Demo-PKI
-        run: echo "TRUSTED_CERTIFICATE=`curl http://localhost:8200/v1/pki/cert/ca | jq .data.certificate | sed 's/\\n/\n/g'| sed -e's/\"//'`" >> $GITHUB_ENV
+        run: sleep 10 && echo "TRUSTED_CERTIFICATE=`curl http://localhost:8200/v1/pki/cert/ca | jq .data.certificate | sed 's/\\n/\n/g'| sed -e's/\"//'`" >> $GITHUB_ENV
       - name: Start Demo-PKI frontend
         working-directory: Demo-PKI
         run: docker-compose up -d frontend

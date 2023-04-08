@@ -27,6 +27,7 @@ jobs:
         with:
           node-version: '16'
           cache: 'npm'
+          cache-dependency-path: 'Demo-Start/IntegrationTests'
       - name: Build Demo-Start
         working-directory: Demo-Start
         run: mvn package

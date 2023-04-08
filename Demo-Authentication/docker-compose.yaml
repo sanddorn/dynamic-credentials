@@ -40,7 +40,7 @@ services:
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo mongodb://admin:admin@database:27017/admin --quiet
   vault:
-    image: vault:1.12.3
+    image: vault:1.13.1
     cap_add:
       - IPC_LOCK
     environment:

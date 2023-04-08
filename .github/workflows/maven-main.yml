@@ -69,7 +69,7 @@ jobs:
         run: docker-compose up -d frontend
       - name: Test Demo-PKI
         working-directory: Demo-PKI/IntegrationTest
-        run: npm install && npm run cy:run
+        run: sleep 10 && npm install && npm run cy:run
       - name: Stop Demo-PKI
         working-directory: Demo-PKI
         run: docker-compose down && docker-compose rm -f

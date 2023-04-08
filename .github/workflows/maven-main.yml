@@ -25,7 +25,7 @@ jobs:
       - name: Set up Node 16
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
           cache: 'yarn'
           cache-dependency-path: 'Demo-Start/IntegrationTest'
       - name: Build Demo-Start
@@ -57,13 +57,13 @@ jobs:
         run: mvn install
       - name: Start Demo-PKI vault
         working-directory: Demo-PKI
-        run: docker-compose up vault vault_provisioner backend
+        run: docker-compose up -d vault vault_provisioner backend
       - name: retrieve PKI token
         working-directory: Demo-PKI
         run: echo "TRUSTED_CERTIFICATE=`curl http://localhost:8200/v1/pki/cert/ca | jq .data.certificate | sed 's/\\n/\n/g'| sed -e's/\"//'`" >> $GITHUB_ENV
       - name: Start Demo-PKI frontend
         working-directory: Demo-PKI
-        run: docker-compose up frontend
+        run: docker-compose up -d frontend
       - name: Test Demo-PKI
         working-directory: Demo-PKI/IntegrationTest
         run: npm install && npm run cy:run

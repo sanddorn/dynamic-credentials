@@ -71,6 +71,7 @@ jobs:
         with:
           start: docker-compose up -d frontend
           wait-on: 'http://localhost:8080/actuator/liveness' # Waits for above
+          working-directory: Demo-PKI/IntegrationTest
           record: true
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}

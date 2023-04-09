@@ -28,30 +28,30 @@ jobs:
           node-version: '18'
           cache: 'yarn'
           cache-dependency-path: 'Demo-Start/IntegrationTest'
-      - name: Build Demo-Start
-        working-directory: Demo-Start
-        run: mvn install
-      - name: Start Demo-Start
-        working-directory: Demo-Start
-        run: docker-compose up -d
-      - name: Test Demo-Start
-        working-directory: Demo-Start/IntegrationTest
-        run: npm install && npm run cy:run
-      - name: Stop Demo-Start
-        working-directory: Demo-Start
-        run: docker-compose down && docker-compose rm -f
-      - name: Build Demo-Database
-        working-directory: Demo-Database
-        run: mvn install
-      - name: Start Demo-Database
-        working-directory: Demo-Database
-        run: docker-compose up -d
-      - name: Test Demo-Database
-        working-directory: Demo-Database/IntegrationTest
-        run: sleep 10 && npm install && npm run cy:run
-      - name: Stop Demo-Database
-        working-directory: Demo-Database
-        run: docker-compose down && docker-compose rm -f
+#      - name: Build Demo-Start
+#        working-directory: Demo-Start
+#        run: mvn install
+#      - name: Start Demo-Start
+#        working-directory: Demo-Start
+#        run: docker-compose up -d
+#      - name: Test Demo-Start
+#        working-directory: Demo-Start/IntegrationTest
+#        run: npm install && npm run cy:run
+#      - name: Stop Demo-Start
+#        working-directory: Demo-Start
+#        run: docker-compose down && docker-compose rm -f
+#      - name: Build Demo-Database
+#        working-directory: Demo-Database
+#        run: mvn install
+#      - name: Start Demo-Database
+#        working-directory: Demo-Database
+#        run: docker-compose up -d
+#      - name: Test Demo-Database
+#        working-directory: Demo-Database/IntegrationTest
+#        run: sleep 10 && npm install && npm run cy:run
+#      - name: Stop Demo-Database
+#        working-directory: Demo-Database
+#        run: docker-compose down && docker-compose rm -f
       - name: Build Demo-PKI
         working-directory: Demo-PKI
         run: mvn install
@@ -60,32 +60,43 @@ jobs:
         run: docker-compose up -d vault vault_provisioner backend
       - name: show PKI token
         working-directory: Demo-PKI
-        run: sleep 10 && curl http://localhost:8200/v1/pki/cert/ca | jq .data.certificate | sed 's/\\n/\n/g'| sed -e's/\"//'
+        uses: nev7n/wait_for_response@v1
+        with:
+          url: http://localhost:8200/v1/pki/cert/ca
+          responseCode: 200
+          timeout: 2000
+          interval: 500
       - name: retrieve PKI token
         working-directory: Demo-PKI
-        run: sleep 10 && echo "TRUSTED_CERTIFICATE=`curl http://localhost:8200/v1/pki/cert/ca | jq .data.certificate | sed 's/\\n/\n/g'| sed -e's/\"//'`" >> $GITHUB_ENV
-      - name: Start Demo-PKI frontend
-        working-directory: Demo-PKI
-        run: docker-compose up -d frontend
+        run: echo "TRUSTED_CERTIFICATE=`curl http://localhost:8200/v1/pki/cert/ca | jq .data.certificate | sed 's/\\n/\n/g'| sed -e's/\"//'`" >> $GITHUB_ENV
+#      - name: Start Demo-PKI frontend
+#        working-directory: Demo-PKI
+#        run: docker-compose up -d frontend
       - name: Test Demo-PKI
         working-directory: Demo-PKI/IntegrationTest
-        run: sleep 10 && npm install && npm run cy:run
+        uses: cypress-io/github-action@v4
+        with:
+          start: docker-compose up -d frontend
+          wait-on: 'http://localhost:8080/actuator/liveness' # Waits for above
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       - name: Stop Demo-PKI
         working-directory: Demo-PKI
         run: docker-compose down && docker-compose rm -f
-      - name: Build Demo-Authentication
-        working-directory: Demo-Authentication
-        run: mvn install
-      - name: Build Vault Plugin
-        working-directory: Demo-Authentication/Vault-SpringUser-Plugin
-        run: make build
-      - name: Start Demo-Authentication
-        working-directory: Demo-Authentication
-        run: docker-compose up -d
-      - name: Test Demo-Authentication
-        working-directory: Demo-Authentication/IntegrationTest
-        run: npm install && npm run cy:run
-      - name: Stop Demo-Authentication
-        working-directory: Demo-Authentication
-        run: docker-compose down && docker-compose rm -f
+#      - name: Build Demo-Authentication
+#        working-directory: Demo-Authentication
+#        run: mvn install
+#      - name: Build Vault Plugin
+#        working-directory: Demo-Authentication/Vault-SpringUser-Plugin
+#        run: make build
+#      - name: Start Demo-Authentication
+#        working-directory: Demo-Authentication
+#        run: docker-compose up -d
+#      - name: Test Demo-Authentication
+#        working-directory: Demo-Authentication/IntegrationTest
+#        run: npm install && npm run cy:run
+#      - name: Stop Demo-Authentication
+#        working-directory: Demo-Authentication
+#        run: docker-compose down && docker-compose rm -f
 

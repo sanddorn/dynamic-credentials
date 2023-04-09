@@ -58,8 +58,7 @@ jobs:
       - name: Start Demo-PKI vault
         working-directory: Demo-PKI
         run: docker-compose up -d vault vault_provisioner backend
-      - name: show PKI token
-        working-directory: Demo-PKI
+      - name: show PKI token      
         uses: nev7n/wait_for_response@v1
         with:
           url: http://localhost:8200/v1/pki/cert/ca
@@ -73,14 +72,13 @@ jobs:
 #        working-directory: Demo-PKI
 #        run: docker-compose up -d frontend
       - name: Test Demo-PKI
-        working-directory: Demo-PKI/IntegrationTest
         uses: cypress-io/github-action@v4
         with:
           start: docker-compose up -d frontend
           wait-on: 'http://localhost:8080/actuator/liveness' # Waits for above
           record: true
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}        
       - name: Stop Demo-PKI
         working-directory: Demo-PKI
         run: docker-compose down && docker-compose rm -f

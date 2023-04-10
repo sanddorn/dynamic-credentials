@@ -35,7 +35,7 @@ jobs:
         working-directory: Demo-Start/IntegrationTest
         run: npm install
       - name: 'Demo-Start: Wait for Backend'
-        run: timeout 60s sh -c 'until curl http://localhost:8088/actuator/health/liveness; do sleep 1; done'
+        run: timeout 180s sh -c 'until curl http://localhost:8088/actuator/health/liveness; do sleep 1; done'
       - name: 'Demo-Start: Test'
         uses: cypress-io/github-action@v4
         with:

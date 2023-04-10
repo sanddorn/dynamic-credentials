@@ -31,6 +31,9 @@ jobs:
       - name: 'Demo-Start: Build'
         working-directory: Demo-Start
         run: mvn install
+      - name: 'Demo-Start: Start'
+        working-directory: Demo-Start
+        run: docker-compose up -d
       - name: 'Demo-Start: Install NPM dependencies'
         working-directory: Demo-Start/IntegrationTest
         run: npm install

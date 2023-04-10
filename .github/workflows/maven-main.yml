@@ -28,18 +28,31 @@ jobs:
           node-version: '18'
           cache: 'yarn'
           cache-dependency-path: 'Demo-Start/IntegrationTest'
-#      - name: Build Demo-Start
-#        working-directory: Demo-Start
-#        run: mvn install
-#      - name: Start Demo-Start
-#        working-directory: Demo-Start
-#        run: docker-compose up -d
-#      - name: Test Demo-Start
-#        working-directory: Demo-Start/IntegrationTest
-#        run: npm install && npm run cy:run
-#      - name: Stop Demo-Start
-#        working-directory: Demo-Start
-#        run: docker-compose down && docker-compose rm -f
+      - name: 'Demo-Start: Build'
+        working-directory: Demo-Start
+        run: mvn install
+      - name: 'Demo-Start: Install NPM dependencies'
+        working-directory: Demo-Start/IntegrationTest
+        run: npm install
+      - name: 'Demo-Start: Wait for Backend'
+        run: timeout 60s sh -c 'until curl http://localhost:8088/actuator/health/liveness; do sleep 1; done'
+      - name: 'Demo-Start: Test'
+        uses: cypress-io/github-action@v4
+        with:
+          start: docker-compose up -d frontend
+          wait-on: http://localhost:8080/actuator/health/liveness
+          wait-on-timeout: 120
+          working-directory: Demo-Start/IntegrationTest
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      - name: 'Demo-Start: Show logs'
+        if: failure()
+        run: docker-compose logs
+        working-directory: Demo-Start
+      - name: 'Demo-Start: Stop'
+        working-directory: Demo-Start
+        run: docker-compose down && docker-compose rm -f
 #      - name: Build Demo-Database
 #        working-directory: Demo-Database
 #        run: mvn install

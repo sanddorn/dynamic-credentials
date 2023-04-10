@@ -82,6 +82,7 @@ jobs:
       - name: Show logs
         if: failure()
         run: docker-compose logs
+        working-directory: Demo-PKI
       - name: Stop Demo-PKI
         working-directory: Demo-PKI
         run: docker-compose down && docker-compose rm -f

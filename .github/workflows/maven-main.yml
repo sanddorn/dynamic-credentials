@@ -22,18 +22,130 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      - name: Build Demo-Start
+      - name: Set up Node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
+          cache-dependency-path: 'Demo-Start/IntegrationTest'
+      - name: 'Demo-Start: Build'
         working-directory: Demo-Start
-        run: mvn package
-      - name: Build Demo-Database
+        run: mvn install
+      - name: 'Demo-Start: Start'
+        working-directory: Demo-Start
+        run: docker-compose up -d
+      - name: 'Demo-Start: Install NPM dependencies'
+        working-directory: Demo-Start/IntegrationTest
+        run: npm install
+      - name: 'Demo-Start: Wait for Backend'
+        run: timeout 180s sh -c 'until curl http://localhost:8088/actuator/health/liveness; do sleep 1; done'
+      - name: 'Demo-Start: Test'
+        uses: cypress-io/github-action@v4
+        with:
+          start: docker-compose up -d frontend
+          wait-on: http://localhost:8080/actuator/health/liveness
+          wait-on-timeout: 120
+          working-directory: Demo-Start/IntegrationTest
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      - name: 'Demo-Start: Show logs'
+        if: failure()
+        run: docker-compose logs
+        working-directory: Demo-Start
+      - name: 'Demo-Start: Stop'
+        working-directory: Demo-Start
+        run: docker-compose down && docker-compose rm -f
+      - name: 'Demo-Database: Build'
         working-directory: Demo-Database
-        run: mvn package
+        run: mvn install
+      - name: 'Demo-Database: Start'
+        working-directory: Demo-Database
+        run: docker-compose up -d
+      - name: 'Demo-Database: Install NPM dependencies'
+        working-directory: Demo-Database/IntegrationTest
+        run: npm install
+      - name: 'Demo-Database: Wait for Backend'
+        run: timeout 180s sh -c 'until curl http://localhost:8088/actuator/health/liveness; do sleep 1; done'
+      - name: 'Demo-Database: Test'
+        uses: cypress-io/github-action@v4
+        with:
+          start: docker-compose up -d frontend
+          wait-on: http://localhost:8080/actuator/health/liveness
+          wait-on-timeout: 120
+          working-directory: Demo-Database/IntegrationTest
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      - name: 'Demo-Database: Show logs'
+        if: failure()
+        run: docker-compose logs
+        working-directory: Demo-Database
+      - name: 'Demo-Database: Stop'
+        working-directory: Demo-Database
+        run: docker-compose down && docker-compose rm -f
       - name: Build Demo-PKI
         working-directory: Demo-PKI
-        run: mvn package
-      - name: Build Demo-Authentication
-        working-directory: Demo-Authentication
-        run: mvn package
-      - name: Build Vault Plugin
+        run: mvn install
+      - name: Start Demo-PKI vault
+        working-directory: Demo-PKI
+        run: docker-compose up -d database vault vault_provisioner
+      - name: Start Demo-PKI vault
+        working-directory: Demo-PKI
+        run: docker-compose up -d backend
+      - name: show PKI token
+        run: timeout 60s sh -c 'until curl http://localhost:8200/v1/pki/cert/ca; do sleep 1; done'
+      - name: retrieve PKI token
+        working-directory: Demo-PKI
+        run: echo "TRUSTED_CERTIFICATE=`curl http://localhost:8200/v1/pki/cert/ca | jq .data.certificate | sed 's/\\n/\n/g'| sed -e's/\"//'`" >> $GITHUB_ENV
+      - name: install NPM dependencies
+        working-directory: Demo-PKI/IntegrationTest
+        run: npm install
+      - name: Test Demo-PKI
+        uses: cypress-io/github-action@v4
+        with:
+          start: docker-compose up -d frontend
+          wait-on: http://localhost:8080/actuator/health/liveness
+          wait-on-timeout: 120
+          working-directory: Demo-PKI/IntegrationTest
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      - name: Show logs
+        if: failure()
+        run: docker-compose logs
+        working-directory: Demo-PKI
+      - name: Stop Demo-PKI
+        working-directory: Demo-PKI
+        run: docker-compose down && docker-compose rm -f
+      - name: 'Demo-Authentication: Build Vault Plugin'
         working-directory: Demo-Authentication/Vault-SpringUser-Plugin
         run: make build
+      - name: 'Demo-Authentication: Build'
+        working-directory: Demo-Authentication
+        run: mvn install
+      - name: 'Demo-Authentication: Start'
+        working-directory: Demo-Authentication
+        run: docker-compose up -d
+      - name: 'Demo-Authentication: Install NPM dependencies'
+        working-directory: Demo-Authentication/IntegrationTest
+        run: npm install
+      - name: 'Demo-Authentication: Wait for Backend'
+        run: timeout 180s sh -c 'until curl http://localhost:8088/actuator/health/liveness; do sleep 1; done'
+      - name: 'Demo-Authentication: Test'
+        uses: cypress-io/github-action@v4
+        with:
+          start: docker-compose up -d frontend
+          wait-on: http://localhost:8080/actuator/health/liveness
+          wait-on-timeout: 120
+          working-directory: Demo-Authentication/IntegrationTest
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      - name: 'Demo-Authentication: Show logs'
+        if: failure()
+        run: docker-compose logs
+        working-directory: Demo-Authentication
+      - name: 'Demo-Authentication: Stop'
+        working-directory: Demo-Authentication
+        run: docker-compose down && docker-compose rm -f

@@ -27,3 +27,25 @@ updates:
     open-pull-requests-limit: 10
     schedule:
       interval: "daily"
+
+  - package-ecosystem: "docker"
+    directory: "/Demo-Start"
+    open-pull-requests-limit: 10
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/Demo-Database"
+    open-pull-requests-limit: 10
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/Demo-PKI"
+    open-pull-requests-limit: 10
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/Demo-Authentication"
+    open-pull-requests-limit: 10
+    schedule:
+      interval: "daily"
+

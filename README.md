@@ -1,3 +1,6 @@
+![CI](https://github.com/sanddorn/dynamic-credentials/actions/workflows/maven-main.yml/badge.svg)
+[![Dynamic-Credentials](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/onz467&style=flat&logo=cypress)](https://cloud.cypress.io/projects/onz467/runs)
+---
 # Dynamic Credentials
 
 You can find the demo project for dynamic credentials and slides of my talk here.

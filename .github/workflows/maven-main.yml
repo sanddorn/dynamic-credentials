@@ -79,6 +79,9 @@ jobs:
           record: true
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      - name: Show logs
+        if: failure()
+        run: docker-compose logs
       - name: Stop Demo-PKI
         working-directory: Demo-PKI
         run: docker-compose down && docker-compose rm -f

@@ -66,6 +66,9 @@ jobs:
 #      - name: Start Demo-PKI frontend
 #        working-directory: Demo-PKI
 #        run: docker-compose up -d frontend
+      - name: install NPM dependencies
+        working-directory: Demo-PKI/IntegrationTest
+        run: npm install
       - name: Test Demo-PKI
         uses: cypress-io/github-action@v4
         with:

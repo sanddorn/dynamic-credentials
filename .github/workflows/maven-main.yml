@@ -73,7 +73,7 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           start: docker-compose up -d frontend
-          wait-on: 'http://localhost:8080/actuator/liveness' # Waits for above
+          wait-on: http://localhost:8080/actuator/health/liveness
           wait-on-timeout: 120
           working-directory: Demo-PKI/IntegrationTest
           record: true

@@ -57,7 +57,10 @@ jobs:
         run: mvn install
       - name: Start Demo-PKI vault
         working-directory: Demo-PKI
-        run: docker-compose up -d database vault vault_provisioner backend
+        run: docker-compose up -d database vault vault_provisioner
+      - name: Start Demo-PKI vault
+        working-directory: Demo-PKI
+        run: docker-compose up -d backend
       - name: show PKI token
         run: timeout 60s sh -c 'until curl http://localhost:8200/v1/pki/cert/ca; do sleep 1; done'
       - name: retrieve PKI token

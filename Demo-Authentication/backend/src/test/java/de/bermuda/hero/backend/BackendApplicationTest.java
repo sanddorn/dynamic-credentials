@@ -27,7 +27,7 @@ class BackendApplicationTest {
 
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
-            TestPropertyValues.of("spring.data.mongodb.uri=" + mongoDBContainer.getConnectionString())
+            TestPropertyValues.of("spring.data.mongodb.uri=" + mongoDBContainer.getConnectionString() + "/hero")
                               .applyTo(applicationContext.getEnvironment());
         }
     }

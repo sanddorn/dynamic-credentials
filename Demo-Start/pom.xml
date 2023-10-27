@@ -15,7 +15,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>3.1.2</spring-boot.version>
+        <spring-boot.version>3.1.5</spring-boot.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <junit-jupiter.version>5.9.3</junit-jupiter.version>
     </properties>
@@ -51,7 +51,7 @@
             <dependency>
                 <groupId>org.webjars</groupId>
                 <artifactId>bootstrap</artifactId>
-                <version>5.3.1</version>
+                <version>5.3.2</version>
             </dependency>
             <dependency>
                 <groupId>org.webjars</groupId>
@@ -61,7 +61,7 @@
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-annotations</artifactId>
-                <version>1.6.11</version>
+                <version>1.6.12</version>
             </dependency>
             <dependency>
                 <groupId>org.springdoc</groupId>
@@ -116,7 +116,7 @@
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-annotations</artifactId>
-                <version>2.2.15</version>
+                <version>2.2.18</version>
             </dependency>
             <dependency>
                 <groupId>org.junit</groupId>
@@ -128,7 +128,7 @@
             <dependency>
                 <groupId>com.squareup.okio</groupId>
                 <artifactId>okio</artifactId>
-                <version>3.5.0</version>
+                <version>3.6.0</version>
             </dependency>
             <dependency>
                 <groupId>de.javacook</groupId>
@@ -179,7 +179,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.2.1</version>
                     <configuration>
                         <argLine>${surefireArgLine}</argLine>
                         <runOrder>random</runOrder>
@@ -224,12 +224,12 @@
                 <plugin>
                     <groupId>org.openapitools</groupId>
                     <artifactId>openapi-generator-maven-plugin</artifactId>
-                    <version>6.6.0</version>
+                    <version>7.0.1</version>
                 </plugin>
                 <plugin>
                     <groupId>io.fabric8</groupId>
                     <artifactId>docker-maven-plugin</artifactId>
-                    <version>0.43.3</version>
+                    <version>0.43.4</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -237,7 +237,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.1</version>
                 <executions>
                     <execution>
                         <id>enforce-maven</id>

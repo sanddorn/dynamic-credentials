@@ -4,8 +4,8 @@ go 1.18
 
 require (
 	github.com/hashicorp/go-hclog v1.5.0
-	github.com/hashicorp/vault/api v1.9.2
-	github.com/hashicorp/vault/sdk v0.10.2
+	github.com/hashicorp/vault/api v1.10.0
+    github.com/hashicorp/vault/sdk v0.10.2
 	go.mongodb.org/mongo-driver v1.12.1
 )
 

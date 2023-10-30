@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/hashicorp/go-hclog v1.5.0
 	github.com/hashicorp/vault/api v1.10.0
-    github.com/hashicorp/vault/sdk v0.10.2
+	github.com/hashicorp/vault/sdk v0.10.2
 	go.mongodb.org/mongo-driver v1.12.1
 )
 
@@ -16,7 +16,7 @@ require (
 	github.com/cenkalti/backoff/v3 v3.2.2 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
-	github.com/docker/docker v24.0.5+incompatible // indirect
+	github.com/docker/docker v24.0.7+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/evanphx/json-patch/v5 v5.6.0 // indirect

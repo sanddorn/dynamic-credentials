@@ -10,4 +10,4 @@ WORKDIR application
 EXPOSE 8080
 ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75"
 COPY --from=builder application/dependencies/ application/spring-boot-loader/ application/snapshot-dependencies/ application/application/ ./
-ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]

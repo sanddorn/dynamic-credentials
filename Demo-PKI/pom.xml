@@ -39,7 +39,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2023.0.2</version>
+                <version>2023.0.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -144,7 +144,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.7.0</version>
+                    <version>3.7.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -179,7 +179,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.3.1</version>
                     <configuration>
                         <argLine>${surefireArgLine}</argLine>
                         <runOrder>random</runOrder>
@@ -224,7 +224,7 @@
                 <plugin>
                     <groupId>org.openapitools</groupId>
                     <artifactId>openapi-generator-maven-plugin</artifactId>
-                    <version>7.6.0</version>
+                    <version>7.7.0</version>
                 </plugin>
                 <plugin>
                     <groupId>io.fabric8</groupId>

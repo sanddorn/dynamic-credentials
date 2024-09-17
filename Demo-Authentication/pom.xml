@@ -16,7 +16,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-boot.version>3.3.3</spring-boot.version>
-        <mapstruct.version>1.6.0</mapstruct.version>
+        <mapstruct.version>1.6.2</mapstruct.version>
         <junit-jupiter.version>5.11.0</junit-jupiter.version>
     </properties>
 
@@ -118,7 +118,7 @@
             <dependency>
                 <groupId>com.squareup.okio</groupId>
                 <artifactId>okio</artifactId>
-                <version>3.9.0</version>
+                <version>3.9.1</version>
             </dependency>
             <dependency>
                 <groupId>javax.ws.rs</groupId>

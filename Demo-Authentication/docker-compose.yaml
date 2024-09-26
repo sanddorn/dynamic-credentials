@@ -1,35 +1,7 @@
 version: "3"
 services:
-  frontend:
-    image: dynamic-credentials/frontend
-    environment:
-      - "BACKEND_URL=http://backend:8080"
-      - "VAULT_ENABLED=true"
-      - "VAULT_URI=http://vault:8200"
-    command:
-      - "--spring.cloud.vault.token=root"
-    networks:
-      - inner
-    ports:
-      - "8080:8080"
-    depends_on:
-      - backend
-      - vault
-  backend:
-    image: dynamic-credentials/backend
-    environment:
-      - "MONGODB_HOST=database:27017"
-      - "VAULT_ENABLED=true"
-      - "VAULT_URI=http://vault:8200"
-    networks:
-      - inner
-    ports:
-      - "8088:8080"
-    depends_on:
-      - database
-      - vault
   database:
-    image: mongo:5.0.9 
+    image: mongo:5.0.9
     environment:
       - "MONGO_INITDB_ROOT_USERNAME=admin"
       - "MONGO_INITDB_ROOT_PASSWORD=admin"
@@ -50,7 +22,8 @@ services:
       - inner
     hostname: vault
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     ports:
       - "8200:8200"
     volumes:
@@ -61,6 +34,46 @@ services:
       - -dev-plugin-dir=/srv
     healthcheck:
       test: "wget --no-verbose --tries=1 --spider http://vault:8200/ui/ || exit 1"
+
+  frontend:
+    image: dynamic-credentials/frontend
+    environment:
+      - "BACKEND_URL=http://backend:8080"
+      - "VAULT_ENABLED=true"
+      - "VAULT_URI=http://vault:8200"
+    command:
+      - "--spring.cloud.vault.token=root"
+    networks:
+      - inner
+    ports:
+      - "8080:8080"
+    depends_on:
+      backend_health:
+        condition: service_healthy
+      vault:
+        condition: service_healthy
+  backend:
+    image: dynamic-credentials/backend
+    environment:
+      - "MONGODB_HOST=database:27017"
+      - "VAULT_ENABLED=true"
+      - "VAULT_URI=http://vault:8200"
+    networks:
+      - inner
+    ports:
+      - "8088:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+      vault:
+        condition: service_healthy
+  backend_health:
+    image: curlimages/curl
+    command: tail -F anything
+    depends_on:
+      - backend
+    healthcheck:
+      test: curl -f http://backend:8080/actuator/health || exit 1
 
   vault_provisioner:
     image: curlimages/curl
@@ -76,10 +89,9 @@ services:
             curl -v --header 'X-Vault-Token: root' --header 'Content-Type: application/json' --data '{\"database\": \"hero\", \"collection\": \"user\", \"roles\": \"USER\", \"class\": \"de.bermuda.hero.backend.UserEntry\", \"ttl\": \"300\", \"max_ttl\": \"600\"}' http://vault:8200/v1/backenduser/role/hero
       "
     depends_on:
-      - vault
+      vault:
+        condition: service_healthy
     networks:
       - inner
-    volumes:
-      - ./Vault-SpringUser-Plugin/vault/plugins:/srv:ro
 networks:
   inner: {}

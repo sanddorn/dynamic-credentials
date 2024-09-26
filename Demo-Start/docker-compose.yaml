@@ -8,7 +8,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - backend
+      backend_health:
+        condition: service_healthy
   backend:
     image: dynamic-credentials/backend
     environment:
@@ -17,11 +18,25 @@ services:
       - inner
     ports:
       - "8088:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+  backend_health:
+    image: curlimages/curl
+    command: tail -F anything
+    networks:
+      - inner
+    depends_on:
+      - backend
+    healthcheck:
+      test: curl -f http://backend:8080/actuator/health || exit 1
   database:
     image: mongo:6.0.1-focal
     networks:
       - inner
     hostname: database
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongodb://database:27017/admin --quiet
 
 networks:
   inner: {}

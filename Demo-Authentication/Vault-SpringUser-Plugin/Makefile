@@ -23,9 +23,9 @@ GOFILES=backend.go client.go path_config.go path_credentials.go path_roles.go us
 
 .DEFAULT_GOAL := all
 
-all: fmt build start
+all: fmt tidy build start
 
-build: fmt $(GOFILES)
+build: tidy fmt $(GOFILES)
 	CGO_ENABLED=0 GOOS=$(GOOS) GOARCH="$(GOARCH)" go build -o vault/plugins/vault-plugin-spring-boot cmd/vault-spring-user-plugin/main.go
 
 start: build
@@ -36,6 +36,9 @@ enable: start
 
 clean:
 	rm -f ./vault/plugins/vault-plugin-secrets-mock
+
+tidy: go.mod
+	go mod tidy
 
 fmt: $(GOFILES)
 	go fmt $$(go list ./...)

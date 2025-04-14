@@ -16,7 +16,7 @@ jobs:
         with:
           github-token: "${{ secrets.TOKEN }}"
       - name: Check Automerge dependencies
-        run: echo "depenency names: ${steps.metadata.oututs.dependency-names}\nupdate-type: ${steps.metadata.outputs.update-type}"
+        run: echo "depenency names=${steps.metadata.oututs.dependency-names}\n update-type= ${steps.metadata.outputs.update-type}"
       - name: Enable auto-merge for Dependabot PRs
         if: contains(steps.metadata.outputs.dependency-names, 'main') && steps.metadata.outputs.update-type == 'version-update:semver-patch'
         run: gh pr merge --auto --merge "$PR_URL"

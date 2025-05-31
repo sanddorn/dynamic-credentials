@@ -11,9 +11,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -149,3 +147,18 @@ jobs:
       - name: 'Demo-Authentication: Stop'
         working-directory: Demo-Authentication
         run: docker compose down && docker compose rm -f
+  automerge:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request' && github.actor == 'dependabot[bot]' && github.repository == 'sanddorn/dynamic-credentials'
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@d7267f607e9d3fb96fc2fbe83e0af444713e90b7
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Enable auto-merge for Dependabot PRs
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}

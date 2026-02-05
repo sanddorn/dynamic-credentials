@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/hashicorp/go-hclog v1.6.3
 	github.com/hashicorp/vault/api v1.22.0
-	github.com/hashicorp/vault/sdk v0.22.0
+	github.com/hashicorp/vault/sdk v0.23.0
 	go.mongodb.org/mongo-driver v1.17.8
 )
 
